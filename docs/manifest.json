@@ -1,15 +1,11 @@
 {
   "name": "ESP32 Display Reader",
-  "version": "1.0.000",
-  "new_install_prompt_erase": true,
+  "version": "1.0.0",
   "builds": [
     {
       "chipFamily": "ESP32",
       "parts": [
-        {
-          "path": "firmware.bin",
-          "offset": 0
-        }
+        { "path": "firmware.bin", "offset": 0 }
       ]
     }
   ]
