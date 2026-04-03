@@ -123,6 +123,6 @@ pio run -t upload
 MIT License
 
 
-[⬆️ Nach oben](#esp32 display reader)
+[⬆️ Nach oben](#esp32-display-reader)
 
 > 📷 Alle Screenshots entstanden im Zusammenspiel mit einer **Buderus WPT260.4 AS** (Logatherm Warmwasser-Wärmepumpe).
