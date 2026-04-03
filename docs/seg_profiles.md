@@ -139,6 +139,6 @@ Werte als Dezimalzahl (0.0–1.0, entspricht 0–100 %).
 
 ---
 
-[⬆️ Nach oben](#)
+[⬆️ Nach oben](#segment-profile)
 
 > 📷 Alle Screenshots entstanden im Zusammenspiel mit einer **Buderus WPT260.4 AS** (Logatherm Warmwasser-Wärmepumpe).
