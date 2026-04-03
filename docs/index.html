@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ESP32 Display Reader Installer</title>
+  <meta name="description" content="Web Installer fuer den ESP32 Display Reader" />
+  <script
+    type="module"
+    src="https://unpkg.com/esp-web-tools@10/dist/web/install-button.js?module">
+  </script>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 2rem;
+      line-height: 1.5;
+      color: #222;
+      background: #f7f7f7;
+    }
+    .card {
+      background: #fff;
+      border-radius: 12px;
+      padding: 2rem;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+    }
+    h1, h2 {
+      margin-top: 0;
+    }
+    .note {
+      background: #fff8e1;
+      border-left: 4px solid #f0b400;
+      padding: 1rem;
+      margin: 1.5rem 0;
+      border-radius: 6px;
+    }
+    .steps li {
+      margin-bottom: 0.5rem;
+    }
+    code {
+      background: #eee;
+      padding: 0.15rem 0.35rem;
+      border-radius: 4px;
+    }
+    .install {
+      margin: 2rem 0;
+    }
+    footer {
+      margin-top: 2rem;
+      font-size: 0.95rem;
+      color: #555;
+    }
+    a {
+      color: #0b62d6;
+      text-decoration: none;
+    }
+    a:hover {
+      text-decoration: underline;
+    }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <h1>ESP32 Display Reader</h1>
+    <p>
+      Web Installer fuer die Firmware des <strong>ESP32 Display Reader</strong>.
+      Die Firmware liest optisch 7-Segment-Anzeigen und segmentbasierte Symbole aus
+      und stellt die erkannten Werte ueber MQTT bereit.
+    </p>
+
+    <div class="note">
+      <strong>Wichtig:</strong> Das Board muss <strong>PSRAM</strong> besitzen.
+      Aktuell unterstuetzt sind z. B. <strong>ESP32-CAM (AI-Thinker kompatibel)</strong>
+      und <strong>ESP32 WROVER</strong>.
+    </div>
+
+    <h2>Installation</h2>
+    <ol class="steps">
+      <li>ESP32 per USB mit dem Computer verbinden</li>
+      <li>Chrome, Edge oder einen kompatiblen Browser verwenden</li>
+      <li>Auf <strong>Firmware installieren</strong> klicken</li>
+      <li>Den passenden seriellen Port auswaehlen</li>
+      <li>Nach dem Flashen das Geraet neu starten</li>
+    </ol>
+
+    <div class="install">
+      <esp-web-install-button manifest="manifest.json">
+        <button slot="activate">Firmware installieren</button>
+      </esp-web-install-button>
+    </div>
+
+    <h2>Erste Einrichtung</h2>
+    <p>
+      Nach dem ersten Start erstellt das Geraet ein WLAN mit einer SSID nach dem Muster
+      <code>DisplayReader-XXXX</code>.
+      Nach dem Verbinden ist die Einrichtung unter
+      <code>http://192.168.4.1</code> erreichbar.
+    </p>
+
+    <h2>Hinweise</h2>
+    <ul>
+      <li>USB-Datenkabel verwenden, kein reines Ladekabel</li>
+      <li>Bei manchen Boards muss fuer das erste Flashen die Boot-Taste gedrueckt werden</li>
+      <li>Falls der Browser den Port nicht findet, USB-Verbindung trennen und erneut verbinden</li>
+    </ul>
+
+    <footer>
+      Projekt auf GitHub:
+      <a href="https://github.com/DocBig/ESP32-Display-Reader">esp32-display-reader</a>
+    </footer>
+  </div>
+</body>
+</html>
