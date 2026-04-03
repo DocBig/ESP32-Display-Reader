@@ -3,112 +3,508 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>ESP32 Display Reader Installer</title>
-  <meta name="description" content="Web Installer fuer den ESP32 Display Reader" />
-  <script
-    type="module"
-    src="https://unpkg.com/esp-web-tools@10/dist/web/install-button.js?module">
-  </script>
+  <title>ESP32 Display Reader – Web Installer</title>
+
+  <script type="module" src="https://unpkg.com/esp-web-tools@10/dist/web/install-button.js?module"></script>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Exo+2:wght@300;600;800&display=swap" rel="stylesheet" />
+
   <style>
+    :root {
+      --bg:        #0a0e14;
+      --surface:   #111820;
+      --border:    #1e2d3d;
+      --accent:    #00d4ff;
+      --accent2:   #ff6b35;
+      --text:      #c9d4e0;
+      --text-dim:  #556878;
+      --green:     #39ff88;
+      --red:       #ff3c5a;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
     body {
-      font-family: Arial, sans-serif;
-      max-width: 900px;
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Exo 2', sans-serif;
+      font-weight: 300;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    /* ── grid bg ── */
+    body::before {
+      content: '';
+      position: fixed; inset: 0; z-index: 0;
+      background-image:
+        linear-gradient(rgba(0,212,255,.04) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(0,212,255,.04) 1px, transparent 1px);
+      background-size: 40px 40px;
+      pointer-events: none;
+    }
+
+    /* ── scanline overlay ── */
+    body::after {
+      content: '';
+      position: fixed; inset: 0; z-index: 0;
+      background: repeating-linear-gradient(
+        0deg,
+        transparent,
+        transparent 2px,
+        rgba(0,0,0,.15) 2px,
+        rgba(0,0,0,.15) 4px
+      );
+      pointer-events: none;
+    }
+
+    .wrap {
+      position: relative; z-index: 1;
+      max-width: 780px;
       margin: 0 auto;
-      padding: 2rem;
-      line-height: 1.5;
-      color: #222;
-      background: #f7f7f7;
+      padding: 3rem 1.5rem 5rem;
     }
-    .card {
-      background: #fff;
-      border-radius: 12px;
-      padding: 2rem;
-      box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+
+    /* ── header ── */
+    header {
+      display: flex;
+      align-items: center;
+      gap: 1.2rem;
+      margin-bottom: 3rem;
     }
-    h1, h2 {
-      margin-top: 0;
+
+    .logo-ring {
+      width: 56px; height: 56px;
+      border: 2px solid var(--accent);
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      position: relative;
+      flex-shrink: 0;
+      box-shadow: 0 0 20px rgba(0,212,255,.3), inset 0 0 12px rgba(0,212,255,.1);
+      animation: pulse 3s ease-in-out infinite;
     }
-    .note {
-      background: #fff8e1;
-      border-left: 4px solid #f0b400;
-      padding: 1rem;
-      margin: 1.5rem 0;
+
+    @keyframes pulse {
+      0%,100% { box-shadow: 0 0 20px rgba(0,212,255,.3), inset 0 0 12px rgba(0,212,255,.1); }
+      50%      { box-shadow: 0 0 35px rgba(0,212,255,.6), inset 0 0 18px rgba(0,212,255,.2); }
+    }
+
+    .logo-ring svg { width: 28px; height: 28px; fill: var(--accent); }
+
+    .title-block h1 {
+      font-size: 1.5rem;
+      font-weight: 800;
+      letter-spacing: .04em;
+      color: #fff;
+    }
+
+    .title-block h1 span { color: var(--accent); }
+
+    .title-block p {
+      font-size: .8rem;
+      color: var(--text-dim);
+      font-family: 'Share Tech Mono', monospace;
+      margin-top: .2rem;
+    }
+
+    /* ── status bar ── */
+    .statusbar {
+      background: var(--surface);
+      border: 1px solid var(--border);
       border-radius: 6px;
+      padding: .6rem 1rem;
+      display: flex;
+      align-items: center;
+      gap: .7rem;
+      font-family: 'Share Tech Mono', monospace;
+      font-size: .78rem;
+      color: var(--text-dim);
+      margin-bottom: 2rem;
     }
+
+    .dot {
+      width: 8px; height: 8px;
+      border-radius: 50%;
+      background: var(--text-dim);
+      flex-shrink: 0;
+    }
+    .dot.ok  { background: var(--green); box-shadow: 0 0 6px var(--green); }
+    .dot.warn { background: var(--accent2); box-shadow: 0 0 6px var(--accent2); }
+
+    /* ── cards ── */
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 1.8rem 2rem;
+      margin-bottom: 1.4rem;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 2px;
+      background: linear-gradient(90deg, transparent, var(--accent), transparent);
+      opacity: .5;
+    }
+
+    .card-label {
+      font-family: 'Share Tech Mono', monospace;
+      font-size: .7rem;
+      color: var(--accent);
+      letter-spacing: .15em;
+      text-transform: uppercase;
+      margin-bottom: .8rem;
+    }
+
+    .card h2 {
+      font-size: 1.15rem;
+      font-weight: 600;
+      color: #fff;
+      margin-bottom: .5rem;
+    }
+
+    .card p {
+      font-size: .88rem;
+      line-height: 1.65;
+      color: var(--text);
+    }
+
+    /* ── board selector ── */
+    .board-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: .8rem;
+      margin: 1.2rem 0 1.6rem;
+    }
+
+    @media (max-width: 480px) { .board-grid { grid-template-columns: 1fr; } }
+
+    .board-btn {
+      background: transparent;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: .9rem 1rem;
+      cursor: pointer;
+      text-align: left;
+      transition: border-color .2s, background .2s;
+      color: var(--text);
+      font-family: 'Exo 2', sans-serif;
+    }
+
+    .board-btn:hover {
+      border-color: var(--accent);
+      background: rgba(0,212,255,.05);
+    }
+
+    .board-btn.selected {
+      border-color: var(--accent);
+      background: rgba(0,212,255,.08);
+      box-shadow: 0 0 12px rgba(0,212,255,.15);
+    }
+
+    .board-btn .bname {
+      font-weight: 600;
+      font-size: .95rem;
+      color: #fff;
+      display: flex;
+      align-items: center;
+      gap: .5rem;
+    }
+
+    .board-btn .bname::before {
+      content: '';
+      width: 10px; height: 10px;
+      border-radius: 50%;
+      border: 2px solid var(--text-dim);
+      flex-shrink: 0;
+      transition: border-color .2s, background .2s;
+    }
+
+    .board-btn.selected .bname::before {
+      border-color: var(--accent);
+      background: var(--accent);
+    }
+
+    .board-btn .bdesc {
+      font-size: .78rem;
+      color: var(--text-dim);
+      margin-top: .3rem;
+      padding-left: 1.4rem;
+    }
+
+    /* ── install button wrapper ── */
+    .install-zone {
+      margin-top: 1.4rem;
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      gap: .8rem;
+    }
+
+    /* override esp-web-tools button */
+    esp-web-install-button {
+      --esp-tools-button-color: var(--accent);
+    }
+
+    esp-web-install-button::part(button) {
+      background: linear-gradient(135deg, #005f73, #00a8cc);
+      color: #fff;
+      border: none;
+      border-radius: 8px;
+      padding: .85rem 2rem;
+      font-family: 'Exo 2', sans-serif;
+      font-size: 1rem;
+      font-weight: 600;
+      letter-spacing: .06em;
+      cursor: pointer;
+      box-shadow: 0 0 20px rgba(0,168,204,.35);
+      transition: box-shadow .2s;
+    }
+
+    esp-web-install-button::part(button):hover {
+      box-shadow: 0 0 30px rgba(0,212,255,.55);
+    }
+
+    .browser-hint {
+      font-family: 'Share Tech Mono', monospace;
+      font-size: .75rem;
+      color: var(--accent2);
+      display: flex;
+      align-items: center;
+      gap: .5rem;
+    }
+
+    .browser-hint::before { content: '⚠'; }
+
+    /* ── step list ── */
+    .steps {
+      counter-reset: step;
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: .9rem;
+    }
+
     .steps li {
-      margin-bottom: 0.5rem;
+      display: flex;
+      gap: 1rem;
+      align-items: flex-start;
+      counter-increment: step;
     }
-    code {
-      background: #eee;
-      padding: 0.15rem 0.35rem;
-      border-radius: 4px;
+
+    .steps li::before {
+      content: counter(step);
+      width: 26px; height: 26px;
+      border-radius: 50%;
+      border: 1px solid var(--accent);
+      color: var(--accent);
+      font-family: 'Share Tech Mono', monospace;
+      font-size: .8rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      margin-top: .05rem;
     }
-    .install {
-      margin: 2rem 0;
+
+    .steps li span {
+      font-size: .88rem;
+      line-height: 1.6;
+      color: var(--text);
     }
+
+    .steps li span strong { color: #fff; }
+
+    /* ── info row ── */
+    .info-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: .8rem;
+      margin-top: .5rem;
+    }
+
+    @media (max-width: 500px) { .info-row { grid-template-columns: 1fr; } }
+
+    .info-chip {
+      background: rgba(0,212,255,.05);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: .7rem .9rem;
+      font-size: .8rem;
+    }
+
+    .info-chip .ic-label {
+      font-family: 'Share Tech Mono', monospace;
+      font-size: .68rem;
+      color: var(--text-dim);
+      text-transform: uppercase;
+      letter-spacing: .1em;
+      margin-bottom: .25rem;
+    }
+
+    .info-chip .ic-val {
+      color: #fff;
+      font-weight: 600;
+    }
+
+    /* ── footer ── */
     footer {
-      margin-top: 2rem;
-      font-size: 0.95rem;
-      color: #555;
+      margin-top: 3rem;
+      text-align: center;
+      font-family: 'Share Tech Mono', monospace;
+      font-size: .72rem;
+      color: var(--text-dim);
     }
-    a {
-      color: #0b62d6;
-      text-decoration: none;
+
+    footer a { color: var(--accent); text-decoration: none; }
+    footer a:hover { text-decoration: underline; }
+
+    /* ── ticker ── */
+    .ticker {
+      font-family: 'Share Tech Mono', monospace;
+      font-size: .72rem;
+      color: var(--text-dim);
+      margin-top: 1rem;
+      overflow: hidden;
+      white-space: nowrap;
     }
-    a:hover {
-      text-decoration: underline;
+
+    .ticker-inner {
+      display: inline-block;
+      animation: ticker 18s linear infinite;
+    }
+
+    @keyframes ticker {
+      0%   { transform: translateX(100%); }
+      100% { transform: translateX(-100%); }
     }
   </style>
 </head>
 <body>
-  <div class="card">
-    <h1>ESP32 Display Reader</h1>
-    <p>
-      Web Installer fuer die Firmware des <strong>ESP32 Display Reader</strong>.
-      Die Firmware liest optisch 7-Segment-Anzeigen und segmentbasierte Symbole aus
-      und stellt die erkannten Werte ueber MQTT bereit.
-    </p>
+<div class="wrap">
 
-    <div class="note">
-      <strong>Wichtig:</strong> Das Board muss <strong>PSRAM</strong> besitzen.
-      Aktuell unterstuetzt sind z. B. <strong>ESP32-CAM (AI-Thinker kompatibel)</strong>
-      und <strong>ESP32 WROVER</strong>.
+  <!-- Header -->
+  <header>
+    <div class="logo-ring">
+      <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+        <path d="M12 2a10 10 0 1 0 10 10A10 10 0 0 0 12 2zm0 18a8 8 0 1 1 8-8 8 8 0 0 1-8 8zm-1-13h2v6h-2zm0 8h2v2h-2z"/>
+      </svg>
+    </div>
+    <div class="title-block">
+      <h1>ESP32 <span>Display Reader</span></h1>
+      <p>// Web Installer · ESP-Web-Tools · Chrome &amp; Edge only</p>
+    </div>
+  </header>
+
+  <!-- Status bar -->
+  <div class="statusbar" id="statusbar">
+    <div class="dot" id="statusdot"></div>
+    <span id="statustext">Browser wird geprüft …</span>
+  </div>
+
+  <!-- Board selection -->
+  <div class="card">
+    <div class="card-label">// 01 · Board auswählen</div>
+    <h2>Welches Board verwendest du?</h2>
+    <p>Wähle dein Board. Der Installer flasht automatisch die passende Firmware.</p>
+
+    <div class="board-grid">
+      <button class="board-btn selected" data-manifest="manifest_esp32cam.json" onclick="selectBoard(this)">
+        <div class="bname">ESP32-CAM</div>
+        <div class="bdesc">AI-Thinker kompatibel · mit OV2640</div>
+      </button>
+      <button class="board-btn" data-manifest="manifest_wrover.json" onclick="selectBoard(this)">
+        <div class="bname">ESP32 WROVER</div>
+        <div class="bdesc">mit PSRAM · externer Kamera</div>
+      </button>
     </div>
 
-    <h2>Installation</h2>
-    <ol class="steps">
-      <li>ESP32 per USB mit dem Computer verbinden</li>
-      <li>Chrome, Edge oder einen kompatiblen Browser verwenden</li>
-      <li>Auf <strong>Firmware installieren</strong> klicken</li>
-      <li>Den passenden seriellen Port auswaehlen</li>
-      <li>Nach dem Flashen das Geraet neu starten</li>
-    </ol>
+    <div class="info-row">
+      <div class="info-chip">
+        <div class="ic-label">Voraussetzung</div>
+        <div class="ic-val">PSRAM erforderlich</div>
+      </div>
+      <div class="info-chip">
+        <div class="ic-label">Framework</div>
+        <div class="ic-val">Arduino / PlatformIO</div>
+      </div>
+    </div>
+  </div>
 
-    <div class="install">
-      <esp-web-install-button manifest="manifest.json">
-        <button slot="activate">Firmware installieren</button>
+  <!-- Flash card -->
+  <div class="card">
+    <div class="card-label">// 02 · Flashen</div>
+    <h2>Firmware installieren</h2>
+    <p>ESP32 per USB anschließen, dann auf „Install" klicken. Der Installer erkennt den Chip automatisch.</p>
+
+    <div class="install-zone">
+      <esp-web-install-button id="installBtn" manifest="manifest_esp32cam.json">
+        <span slot="unsupported">
+          <span class="browser-hint">Web Serial nicht unterstützt. Bitte Chrome oder Edge verwenden.</span>
+        </span>
       </esp-web-install-button>
     </div>
-
-    <h2>Erste Einrichtung</h2>
-    <p>
-      Nach dem ersten Start erstellt das Geraet ein WLAN mit einer SSID nach dem Muster
-      <code>DisplayReader-XXXX</code>.
-      Nach dem Verbinden ist die Einrichtung unter
-      <code>http://192.168.4.1</code> erreichbar.
-    </p>
-
-    <h2>Hinweise</h2>
-    <ul>
-      <li>USB-Datenkabel verwenden, kein reines Ladekabel</li>
-      <li>Bei manchen Boards muss fuer das erste Flashen die Boot-Taste gedrueckt werden</li>
-      <li>Falls der Browser den Port nicht findet, USB-Verbindung trennen und erneut verbinden</li>
-    </ul>
-
-    <footer>
-      Projekt auf GitHub:
-      <a href="https://github.com/DocBig/ESP32-Display-Reader">esp32-display-reader</a>
-    </footer>
   </div>
+
+  <!-- Steps card -->
+  <div class="card">
+    <div class="card-label">// 03 · Erste Schritte nach dem Flash</div>
+    <h2>Was passiert als nächstes?</h2>
+    <ol class="steps">
+      <li><span>ESP32 startet einen <strong>WLAN Access Point</strong> namens <strong>DisplayReader-XXXX</strong></span></li>
+      <li><span>Mit diesem WLAN verbinden, dann im Browser <strong>192.168.4.1</strong> öffnen</span></li>
+      <li><span>Im Webinterface dein <strong>Heim-WLAN und MQTT</strong> konfigurieren</span></li>
+      <li><span>Home Assistant erkennt den Sensor automatisch per <strong>Auto Discovery</strong></span></li>
+    </ol>
+  </div>
+
+  <!-- Ticker -->
+  <div class="ticker">
+    <div class="ticker-inner">
+      ESP32-Display-Reader · MQTT · Home Assistant · 7-Segment · OTA Updates · WS2812B · PWM Beleuchtung · Auto Discovery &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+      ESP32-Display-Reader · MQTT · Home Assistant · 7-Segment · OTA Updates · WS2812B · PWM Beleuchtung · Auto Discovery
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <footer>
+    <p>
+      <a href="https://github.com/DocBig/ESP32-Display-Reader" target="_blank">GitHub Repository</a>
+      &nbsp;·&nbsp;
+      <a href="https://github.com/DocBig/ESP32-Display-Reader/blob/main/docs/installation.md" target="_blank">Dokumentation</a>
+      &nbsp;·&nbsp; MIT License
+    </p>
+  </footer>
+
+</div>
+
+<script>
+  // Board auswählen
+  function selectBoard(btn) {
+    document.querySelectorAll('.board-btn').forEach(b => b.classList.remove('selected'));
+    btn.classList.add('selected');
+    const manifest = btn.dataset.manifest;
+    document.getElementById('installBtn').setAttribute('manifest', manifest);
+  }
+
+  // Browser-Check
+  window.addEventListener('DOMContentLoaded', () => {
+    const dot  = document.getElementById('statusdot');
+    const text = document.getElementById('statustext');
+
+    if ('serial' in navigator) {
+      dot.classList.add('ok');
+      text.textContent = 'Browser unterstützt Web Serial — bereit zum Flashen';
+    } else {
+      dot.classList.add('warn');
+      text.textContent = 'Web Serial nicht verfügbar — bitte Chrome oder Edge verwenden';
+    }
+  });
+</script>
 </body>
 </html>
