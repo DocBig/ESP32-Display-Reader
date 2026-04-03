@@ -577,6 +577,6 @@ Startet den ESP32 neu. Eine Bestätigung ist erforderlich.
 
 ---
 
-[⬆️ Nach oben](#)
+[⬆️ Nach oben](#webinterface)
 
 > 📷 Alle Screenshots entstanden im Zusammenspiel mit einer **Buderus WPT260.4 AS** (Logatherm Warmwasser-Wärmepumpe).
