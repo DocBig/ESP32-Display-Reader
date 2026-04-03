@@ -82,6 +82,6 @@ In Home Assistant erscheinen beide Geräte als **separate Geräte** mit je eigen
 
 ---
 
-[⬆️ Nach oben](#)
+[⬆️ Nach oben](#home-assistant-integration)
 
 > 📷 Alle Screenshots entstanden im Zusammenspiel mit einer **Buderus WPT260.4 AS** (Logatherm Warmwasser-Wärmepumpe).
