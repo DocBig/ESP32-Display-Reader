@@ -66,6 +66,6 @@ Nach dem Speichern startet das Gerät neu und verbindet sich mit dem WLAN.
 
 ---
 
-[⬆️ Nach oben](#)
+[⬆️ Nach oben](#installation-und-wlan-einrichtung)
 
 > 📷 Alle Screenshots entstanden im Zusammenspiel mit einer **Buderus WPT260.4 AS** (Logatherm Warmwasser-Wärmepumpe).
