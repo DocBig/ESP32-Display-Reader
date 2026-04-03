@@ -443,6 +443,6 @@ Das Gerät kann über die **Debug** Sektion neu gestartet werden:
 
 ---
 
-[⬆️ Nach oben](#)
+[⬆️ Nach oben](#test-und-fehlersuche)
 
 > 📷 Alle Screenshots entstanden im Zusammenspiel mit einer **Buderus WPT260.4 AS** (Logatherm Warmwasser-Wärmepumpe).
