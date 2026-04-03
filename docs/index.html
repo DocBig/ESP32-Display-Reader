@@ -174,69 +174,6 @@
       color: var(--text);
     }
 
-    /* ── board selector ── */
-    .board-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: .8rem;
-      margin: 1.2rem 0 1.6rem;
-    }
-
-    @media (max-width: 480px) { .board-grid { grid-template-columns: 1fr; } }
-
-    .board-btn {
-      background: transparent;
-      border: 1px solid var(--border);
-      border-radius: 8px;
-      padding: .9rem 1rem;
-      cursor: pointer;
-      text-align: left;
-      transition: border-color .2s, background .2s;
-      color: var(--text);
-      font-family: 'Exo 2', sans-serif;
-    }
-
-    .board-btn:hover {
-      border-color: var(--accent);
-      background: rgba(0,212,255,.05);
-    }
-
-    .board-btn.selected {
-      border-color: var(--accent);
-      background: rgba(0,212,255,.08);
-      box-shadow: 0 0 12px rgba(0,212,255,.15);
-    }
-
-    .board-btn .bname {
-      font-weight: 600;
-      font-size: .95rem;
-      color: #fff;
-      display: flex;
-      align-items: center;
-      gap: .5rem;
-    }
-
-    .board-btn .bname::before {
-      content: '';
-      width: 10px; height: 10px;
-      border-radius: 50%;
-      border: 2px solid var(--text-dim);
-      flex-shrink: 0;
-      transition: border-color .2s, background .2s;
-    }
-
-    .board-btn.selected .bname::before {
-      border-color: var(--accent);
-      background: var(--accent);
-    }
-
-    .board-btn .bdesc {
-      font-size: .78rem;
-      color: var(--text-dim);
-      margin-top: .3rem;
-      padding-left: 1.4rem;
-    }
-
     /* ── install button wrapper ── */
     .install-zone {
       margin-top: 1.4rem;
@@ -407,43 +344,25 @@
     <span id="statustext">Browser wird geprüft …</span>
   </div>
 
-  <!-- Board selection -->
+  <!-- Flash card -->
   <div class="card">
-    <div class="card-label">// 01 · Board auswählen</div>
-    <h2>Welches Board verwendest du?</h2>
-    <p>Wähle dein Board. Der Installer flasht automatisch die passende Firmware.</p>
+    <div class="card-label">// 01 · Flashen</div>
+    <h2>Firmware installieren</h2>
+    <p>Funktioniert mit <strong>ESP32-CAM</strong> und <strong>ESP32 WROVER</strong> – beide nutzen dieselbe Firmware. ESP32 per USB anschließen, dann auf „Install" klicken.</p>
 
-    <div class="board-grid">
-      <button class="board-btn selected" data-manifest="manifest_esp32cam.json" onclick="selectBoard(this)">
-        <div class="bname">ESP32-CAM</div>
-        <div class="bdesc">AI-Thinker kompatibel · mit OV2640</div>
-      </button>
-      <button class="board-btn" data-manifest="manifest_wrover.json" onclick="selectBoard(this)">
-        <div class="bname">ESP32 WROVER</div>
-        <div class="bdesc">mit PSRAM · externer Kamera</div>
-      </button>
-    </div>
-
-    <div class="info-row">
+    <div class="info-row" style="margin-top:1.1rem">
+      <div class="info-chip">
+        <div class="ic-label">Unterstützte Boards</div>
+        <div class="ic-val">ESP32-CAM · WROVER</div>
+      </div>
       <div class="info-chip">
         <div class="ic-label">Voraussetzung</div>
         <div class="ic-val">PSRAM erforderlich</div>
       </div>
-      <div class="info-chip">
-        <div class="ic-label">Framework</div>
-        <div class="ic-val">Arduino / PlatformIO</div>
-      </div>
     </div>
-  </div>
-
-  <!-- Flash card -->
-  <div class="card">
-    <div class="card-label">// 02 · Flashen</div>
-    <h2>Firmware installieren</h2>
-    <p>ESP32 per USB anschließen, dann auf „Install" klicken. Der Installer erkennt den Chip automatisch.</p>
 
     <div class="install-zone">
-      <esp-web-install-button id="installBtn" manifest="manifest_esp32cam.json">
+      <esp-web-install-button manifest="manifest.json">
         <span slot="unsupported">
           <span class="browser-hint">Web Serial nicht unterstützt. Bitte Chrome oder Edge verwenden.</span>
         </span>
@@ -453,7 +372,7 @@
 
   <!-- Steps card -->
   <div class="card">
-    <div class="card-label">// 03 · Erste Schritte nach dem Flash</div>
+    <div class="card-label">// 02 · Erste Schritte nach dem Flash</div>
     <h2>Was passiert als nächstes?</h2>
     <ol class="steps">
       <li><span>ESP32 startet einen <strong>WLAN Access Point</strong> namens <strong>DisplayReader-XXXX</strong></span></li>
@@ -484,14 +403,6 @@
 </div>
 
 <script>
-  // Board auswählen
-  function selectBoard(btn) {
-    document.querySelectorAll('.board-btn').forEach(b => b.classList.remove('selected'));
-    btn.classList.add('selected');
-    const manifest = btn.dataset.manifest;
-    document.getElementById('installBtn').setAttribute('manifest', manifest);
-  }
-
   // Browser-Check
   window.addEventListener('DOMContentLoaded', () => {
     const dot  = document.getElementById('statusdot');
